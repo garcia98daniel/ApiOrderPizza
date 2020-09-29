@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('api/pedidos', function () {
+//     return view('orders');
+// });
+
+Route::get('api/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
+
+// Route::post('api/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
