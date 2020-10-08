@@ -17,6 +17,3 @@ use Illuminate\Support\Facades\Route;
 //     return view('orders');
 // });
 
-Route::get('api/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
-
-// Route::post('api/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);

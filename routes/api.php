@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::get('pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
+Route::get('historial/{date?}', [\App\Http\Controllers\OrderController::class, 'getOrdersByDate']);
+Route::get('productos/{order_id}', [\App\Http\Controllers\ProductController::class, 'index']);
+Route::get('adicionales/{product_id}', [\App\Http\Controllers\AdditionalController::class, 'index']);
+
+// Route::post('api/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);

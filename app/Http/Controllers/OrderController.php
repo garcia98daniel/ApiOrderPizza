@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class OrderController extends Controller
 {
@@ -14,9 +15,25 @@ class OrderController extends Controller
      */
     public function index()
     {
-        // $orders=Order::all();
         $orders = Order::getTodayOrders();
-        return response()->json($orders);
+        return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getOrdersByDate($date = 'empty')
+    {
+        if($date == 'empty'){
+            $orders = Order::getTodayOrders();
+            return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
+        }else{
+            $orders = Order::getTodayOrders($date);
+            return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
+        }
+        return 'Error';
     }
 
     /**
