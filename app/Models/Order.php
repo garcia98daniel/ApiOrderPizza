@@ -23,7 +23,7 @@ class Order extends Model
     {
         return $orders = Order::with(['user','products','products.additionals'])
         ->orderBy('orders.created_at')
-        // ->where('orders.created_at','=', Carbon::now()->format('Y-m-d'))
+        ->where('orders.created_at','=', Carbon::now()->format('Y-m-d'))
         ->get();
     }
 
@@ -36,10 +36,22 @@ class Order extends Model
         ->get();
     }
 
-    public static function getTotalOrderPrice($id)
+    public static function getTotalSales()
     {
-        $TotalProduct = Order::where('orders.id',$id)
-        ->get('orders.princes');
+        return Order::where('orders.created_at','=', Carbon::now()->format('Y-m-d'))
+        ->sum('orders.price');
+    }
+//usar whereBetween()->endOfday
+    public static function getTotalSalesByDate($date)
+    {
+        return Order::where('orders.created_at','=', $date)
+        ->sum('orders.price');
+    }
+
+    // public static function getTotalOrderPrice($id)
+    // {
+    //     return Order::findOrFail($id)
+    //     ->get('orders.price');
 
         // $TotalProduct = DB::table('products')
         // ->where('products.order_id',$id)
@@ -53,6 +65,6 @@ class Order extends Model
 
         // $TotalOrderPrice = $TotalProduct + $TotalAdditionalProduct;
         // return $TotalOrderPrice;
-    }
+    // }
 }
 

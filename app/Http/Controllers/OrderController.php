@@ -41,16 +41,27 @@ class OrderController extends Controller
         return 'Date Not found';
     }
 
+    public function getTotalSalesInAday($date = 'empty'){
+        if($date == 'empty'){
+            $totalSales = Order::getTotalSales();
+            return response()->json($totalSales, 200);
+        }else{
+            $totalSales = Order::getTotalSalesByDate($date);
+            return response()->json($totalSales, 200);
+        }
+        return 'Date Not found';
+    }
+
         /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function getTotalOrderPrice($id)
-    {
-        $TotalOrderPrice = Order::getTotalOrderPrice($id);
-        return response()->json($TotalOrderPrice, 200);
-    }
+    // public function getTotalOrderPrice($id)
+    // {
+    //     $TotalOrderPrice = Order::getTotalOrderPrice($id);
+    //     return response()->json($TotalOrderPrice, 200);
+    // }
 
     /**
      * Show the form for creating a new resource.
@@ -77,29 +88,39 @@ class OrderController extends Controller
             $order->change = $request->get('change');
             $order->address = $request->get('address');
             $order->reference =  $request->get('reference');
+            $order->price =  $request->get('price');
             $order->save();
 
             $requestUser = $request->get('user');
             $user = new User();
             $user->order_id = $order->id;
-            $user->name = $requestUser->name;
-            $user->phone_number = $requestUser->phone_number;
+            $user->name = $requestUser['name'];
+            $user->phone_number = $requestUser['phone_number'];
             $user->save();
 
             $requestProducts = $request->get('products');
             for ($i=0; $i < count($requestProducts); $i++) { 
                 $product = new Product();
                 $product->order_id = $order->id;
-                $product->quantity = $requestProducts[$i]->quantity;
-                $product->name = $requestProducts[$i]->name;
-                $product->price = $requestProducts[$i]->price;
-                $product->size = $requestProducts[$i]->size;
-                $product->observation = $requestProducts[$i]->observation;
+                $product->quantity = $requestProducts[$i]['quantity'];
+                $product->name = $requestProducts[$i]['name'];
+                $product->size = $requestProducts[$i]['size'];
+                $product->observation = $requestProducts[$i]['observation'];
 
                 $product->save();
+
+                $additionalsProduct = $requestProducts[$i]['additionals'];
+                for ($i=0; $i < count($additionalsProduct); $i++) {
+                    $additional = new Additional();
+                    $additional->product_id = $product->id;
+                    $additional->name = $additionalsProduct[$i]['name'];
+                    $additional->save();
+                }
             }
+
+            return response()->json("Order created id:".$order->id, 201);
         } catch (ModelNotFoundException $exception) {
-            return response()->json("Error in post order");
+            return response()->json("Error creating order");
         }
         
     }
