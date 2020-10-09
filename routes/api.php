@@ -18,10 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
-Route::get('historial/{date?}', [\App\Http\Controllers\OrderController::class, 'getOrdersByDate']);
-Route::get('total-ventas/{date?}', [\App\Http\Controllers\OrderController::class, 'getTotalSalesInAday']);
-
-// Route::get('totalPedido/{id}', [\App\Http\Controllers\OrderController::class, 'getTotalOrderPrice']);
-
-Route::post('pedidos', [\App\Http\Controllers\OrderController::class, 'store']);
+Route::get('admin/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
+Route::get('admin/historial/{date?}', [\App\Http\Controllers\OrderController::class, 'getOrdersByDate']);
+Route::get('admin/total-ventas/{date?}', [\App\Http\Controllers\OrderController::class, 'getTotalSalesInAday']);
+Route::post('admin/pedidos', [\App\Http\Controllers\OrderController::class, 'store']);
