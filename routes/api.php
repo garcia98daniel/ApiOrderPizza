@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
 Route::get('historial/{date?}', [\App\Http\Controllers\OrderController::class, 'getOrdersByDate']);
-Route::get('productos/{order_id}', [\App\Http\Controllers\ProductController::class, 'index']);
-Route::get('adicionales/{product_id}', [\App\Http\Controllers\AdditionalController::class, 'index']);
+Route::get('totalPedido/{id}', [\App\Http\Controllers\OrderController::class, 'getTotalOrderPrice']);
 
-// Route::post('api/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
+Route::post('pedidos', [\App\Http\Controllers\OrderController::class, 'store']);

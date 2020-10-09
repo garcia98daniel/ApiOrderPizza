@@ -14,9 +14,7 @@ class AdditionalController extends Controller
      */
     public function index($product_id)
     {
-        // $orders=Order::all();
-        $additionals = Additional::getAdditionalProduct($product_id);
-        return response()->json($additionals);
+        
     }
 
     /**

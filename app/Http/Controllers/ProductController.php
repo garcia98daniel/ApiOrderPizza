@@ -14,9 +14,7 @@ class ProductController extends Controller
      */
     public function index($order_id)
     {
-        // $Products=Order::all();
-        $Products = Product::getUserProducts($order_id);
-        return response()->json($Products);
+ 
     }
 
 }

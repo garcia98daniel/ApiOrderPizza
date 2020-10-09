@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\User;
+use App\Models\Product;
+use App\Models\Additional;
+
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
@@ -16,7 +20,7 @@ class OrderController extends Controller
     public function index()
     {
         $orders = Order::getTodayOrders();
-        return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
+        return response()->json($orders, 200);
     }
 
     /**
@@ -28,12 +32,24 @@ class OrderController extends Controller
     {
         if($date == 'empty'){
             $orders = Order::getTodayOrders();
-            return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
+            return response()->json($orders, 200);
+            // return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
         }else{
-            $orders = Order::getTodayOrders($date);
-            return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
+            $orders = Order::getOrdersByDate($date);
+            return response()->json($orders, 200);
         }
-        return 'Error';
+        return 'Date Not found';
+    }
+
+        /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getTotalOrderPrice($id)
+    {
+        $TotalOrderPrice = Order::getTotalOrderPrice($id);
+        return response()->json($TotalOrderPrice, 200);
     }
 
     /**
@@ -54,16 +70,38 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        $order = new Order();
-        $order->wayToPay = $request->get('wayToPay');
-        $order->change = $request->get('change');
-        $order->address = $request->get('address');
-        $order->reference =  $request->get('reference');
-        $resul=$order->save();
 
-        if($resul){
-            return $order;
+        try {
+            $order = new Order();
+            $order->wayToPay = $request->get('wayToPay');
+            $order->change = $request->get('change');
+            $order->address = $request->get('address');
+            $order->reference =  $request->get('reference');
+            $order->save();
+
+            $requestUser = $request->get('user');
+            $user = new User();
+            $user->order_id = $order->id;
+            $user->name = $requestUser->name;
+            $user->phone_number = $requestUser->phone_number;
+            $user->save();
+
+            $requestProducts = $request->get('products');
+            for ($i=0; $i < count($requestProducts); $i++) { 
+                $product = new Product();
+                $product->order_id = $order->id;
+                $product->quantity = $requestProducts[$i]->quantity;
+                $product->name = $requestProducts[$i]->name;
+                $product->price = $requestProducts[$i]->price;
+                $product->size = $requestProducts[$i]->size;
+                $product->observation = $requestProducts[$i]->observation;
+
+                $product->save();
+            }
+        } catch (ModelNotFoundException $exception) {
+            return response()->json("Error in post order");
         }
+        
     }
 
     /**

@@ -19,6 +19,7 @@ class CreateOrdersTable extends Migration
             $table->integer('change');
             $table->text('address');
             $table->text('reference');
+            $table->integer('price');
             $table->timestamps();
         });
     }

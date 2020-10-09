@@ -18,11 +18,6 @@ class Product extends Model
         return $this->belongsTo('App\Models\Order');
     }
 
-
-
-
-
-    
     // public function getUserProducts($order_id)
     // {
     //     return DB::table('products')
