@@ -28,22 +28,26 @@ class Order extends Model
 
         return $orders = Order::with(['user','products','products.additionals'])
         ->orderBy('orders.created_at')
+        ->where('orders.status','=','acepted')
+        ->whereBetween('orders.created_at', [$startDay , $endDay])
+        ->orWhere('orders.status','=','null')
         ->whereBetween('orders.created_at', [$startDay , $endDay])
         // ->where('orders.created_at','=', Carbon::now()->format('Y-m-d'))
         ->get();
     }
 
-    public static function getOrdersByDate($date)
+    public static function getOrdersByDate($startDate, $endDate)
     {
         // $dt = Carbon::now();
-        // dd($dt->copy()->startOfDay(), $dt->copy()->endOfDay());
-        $startDay = Carbon::parse($date)->startOfDay();
-        $endDay   = $startDay->copy()->endOfDay();
+        $startDay = Carbon::parse($startDate)->startOfDay();
+        $endDay   = Carbon::parse($endDate)->endOfDay();
+        // dd($startDay, $endDay);
 
         return $orders = Order::with(['user','products','products.additionals'])
         ->orderBy('orders.created_at')
         ->whereBetween('orders.created_at', [$startDay , $endDay])
         // ->where('orders.created_at','=', )
+        ->where('orders.status','=','acepted')
         ->with(['products.additionals'])
         ->get();
     }
@@ -56,18 +60,19 @@ class Order extends Model
         $endDay   = $startDay->copy()->endOfDay();
         // return Order::where('orders.created_at','=', $date)
         return Order::whereBetween('orders.created_at', [$startDay , $endDay])
+        ->where('orders.status','=','acepted')
         ->sum('orders.price');
     }
 //usar whereBetween()->endOfday
-    public static function getTotalSalesByDate($date)
+    public static function getTotalSalesByDate($startDate, $endDate)
     {
         // $dt = Carbon::now();
         // dd($dt->copy()->startOfDay(), $dt->copy()->endOfDay());
-        
-        $startDay = Carbon::parse($date)->startOfDay();
-        $endDay   = $startDay->copy()->endOfDay();
+        $startDay = Carbon::parse($startDate)->startOfDay();
+        $endDay   = Carbon::parse($endDate)->endOfDay();
         // return Order::where('orders.created_at','=', $date)
-        return Order::whereBetween('orders.created_at', [$date , $endDay])
+        return Order::whereBetween('orders.created_at', [$startDay , $endDay])
+        ->where('orders.status','=','acepted')
         ->sum('orders.price');
     }
 

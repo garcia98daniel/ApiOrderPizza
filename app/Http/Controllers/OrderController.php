@@ -28,25 +28,25 @@ class OrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getOrdersByDate($date = 'empty')
+    public function getOrdersByDate($startDate = 'empty', $endDate = 'empty')
     {
-        if($date == 'empty'){
+        if($startDate == 'empty' || $endDate == 'empty'){
             $orders = Order::getTodayOrders();
             return response()->json($orders, 200);
             // return response()->json($orders->load('users')->load('products')->load('products.additionals'), 200);
         }else{
-            $orders = Order::getOrdersByDate($date);
+            $orders = Order::getOrdersByDate($startDate, $endDate);
             return response()->json($orders, 200);
         }
         return 'Date Not found';
     }
 
-    public function getTotalSalesInAday($date = 'empty'){
-        if($date == 'empty'){
+    public function getTotalSalesInAday($startDate = 'empty', $endDate = 'empty'){
+        if($startDate == 'empty' || $endDate == 'empty'){
             $totalSales = Order::getTotalSales();
             return response()->json($totalSales, 200);
         }else{
-            $totalSales = Order::getTotalSalesByDate($date);
+            $totalSales = Order::getTotalSalesByDate($startDate, $endDate);
             return response()->json($totalSales, 200);
         }
         return 'Date Not found';
@@ -81,7 +81,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-
+        // Log::info($request);
         try {
             $order = new Order();
             $order->wayToPay = $request->get('wayToPay');
@@ -89,6 +89,7 @@ class OrderController extends Controller
             $order->address = $request->get('address');
             $order->reference =  $request->get('reference');
             $order->price =  $request->get('price');
+            $order->status =  'null';
             $order->save();
 
             $requestUser = $request->get('user');
@@ -104,23 +105,26 @@ class OrderController extends Controller
                 $product->order_id = $order->id;
                 $product->quantity = $requestProducts[$i]['quantity'];
                 $product->name = $requestProducts[$i]['name'];
+                $product->price = $requestProducts[$i]['price'];
                 $product->size = $requestProducts[$i]['size'];
                 $product->observation = $requestProducts[$i]['observation'];
 
                 $product->save();
 
                 $additionalsProduct = $requestProducts[$i]['additionals'];
-                for ($i=0; $i < count($additionalsProduct); $i++) {
+                // return response()->json($additionalsProduct[0]['name']);
+                for ($j=0; $j < count($additionalsProduct); $j++) {
                     $additional = new Additional();
                     $additional->product_id = $product->id;
-                    $additional->name = $additionalsProduct[$i]['name'];
+                    $additional->name = $additionalsProduct[$j]['name'];
+                    $additional->type = $additionalsProduct[$j]['type'];
                     $additional->save();
                 }
             }
 
             return response()->json("Order created id:".$order->id, 201);
         } catch (ModelNotFoundException $exception) {
-            return response()->json("Error creating order");
+            return response()->json($product->save());
         }
         
     }
@@ -154,9 +158,13 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Order $order)
+    public function update($id, Request $request)
     {
-        //
+        $order = Order::findOrFail($id);
+        $order->status = $request->get('status');
+        $order->update();
+        
+        return response()->json("Order updated id:".$order->id, 200);
     }
 
     /**
@@ -165,8 +173,11 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Order $order)
+    public function destroy($id)
     {
-        //
+        $order = Order::findOrFail($id);
+        $order->delete();
+        
+        return response()->json("Order deleted id:".$order->id, 200);
     }
 }

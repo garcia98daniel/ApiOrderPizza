@@ -19,6 +19,10 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('admin/pedidos', [\App\Http\Controllers\OrderController::class, 'index']);
-Route::get('admin/historial/{date?}', [\App\Http\Controllers\OrderController::class, 'getOrdersByDate']);
-Route::get('admin/total-ventas/{date?}', [\App\Http\Controllers\OrderController::class, 'getTotalSalesInAday']);
+Route::get('admin/historial/{startdate?}/{enddate?}', [\App\Http\Controllers\OrderController::class, 'getOrdersByDate']);
+Route::get('admin/total-ventas/{startdate?}/{enddate?}', [\App\Http\Controllers\OrderController::class, 'getTotalSalesInAday']);
 Route::post('admin/pedidos', [\App\Http\Controllers\OrderController::class, 'store']);
+
+Route::match(['put', 'patch'], 'admin/pedidos/edit-status/{orderId}', [\App\Http\Controllers\OrderController::class, 'update']);
+Route::delete('admin/pedidos/delete/{orderId}', [\App\Http\Controllers\OrderController::class, 'destroy']);
+

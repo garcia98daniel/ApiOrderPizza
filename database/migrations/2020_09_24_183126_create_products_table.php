@@ -19,9 +19,9 @@ class CreateProductsTable extends Migration
             $table->foreign('order_id')->references('id')->on('orders');
             $table->integer('quantity');
             $table->string('name');
-            // $table->integer('price');
+            $table->integer('price');
             $table->string('size');
-            $table->text('observation');
+            $table->string('observation')->nullable();
             $table->timestamps();
         });
     }

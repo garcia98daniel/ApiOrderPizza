@@ -20,6 +20,7 @@ class CreateOrdersTable extends Migration
             $table->text('address');
             $table->text('reference');
             $table->integer('price');
+            $table->string('status');
             $table->timestamps();
         });
     }

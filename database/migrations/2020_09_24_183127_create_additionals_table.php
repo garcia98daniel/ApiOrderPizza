@@ -17,8 +17,8 @@ class CreateAdditionalsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('product_id')->nullable(); //adicional
             $table->foreign('product_id')->references('id')->on('products');
-            $table->string('name');
-            // $table->integer('price');
+            $table->string('name')->nullable();
+            $table->string('type');
             $table->timestamps();
         });
     }
