@@ -76,23 +76,11 @@ class Order extends Model
         ->sum('orders.price');
     }
 
-    // public static function getTotalOrderPrice($id)
-    // {
-    //     return Order::findOrFail($id)
-    //     ->get('orders.price');
-
-        // $TotalProduct = DB::table('products')
-        // ->where('products.order_id',$id)
-        // ->sum('products.price');
-
-        // $TotalAdditionalProduct = DB::table('additionals')
-        // ->join('products', 'products.id', '=', 'additionals.product_id')
-        // ->where('products.order_id',$id)
-        // ->where('additionals.product_id','products.id')
-        // ->sum('additionals.price');
-
-        // $TotalOrderPrice = $TotalProduct + $TotalAdditionalProduct;
-        // return $TotalOrderPrice;
-    // }
+    public static function getOrderById($orderId)
+    {   
+        $order = Order::with(['user','products','products.additionals'])
+        ->where('orders.id','=', $orderId)->get();
+        return response()->json($order);
+    }
 }
 

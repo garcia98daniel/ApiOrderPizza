@@ -10,6 +10,8 @@ use App\Models\Additional;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
+use App\Events\OrderNotification;
+
 class OrderController extends Controller
 {
     /**
@@ -122,6 +124,8 @@ class OrderController extends Controller
                 }
             }
 
+            broadcast(New OrderNotification( Order::getOrderById($order->id) ) );
+
             return response()->json("Order created id:".$order->id, 201);
         } catch (ModelNotFoundException $exception) {
             return response()->json($product->save());
@@ -135,9 +139,10 @@ class OrderController extends Controller
      * @param  \App\Models\Order  $order
      * @return \Illuminate\Http\Response
      */
-    public function show(Order $order)
+    public function show($orderId)
     {
-        //
+        $newOrder =  Order::getOrderById($orderId);
+        return $newOrder;
     }
 
     /**
